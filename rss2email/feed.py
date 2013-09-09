@@ -404,6 +404,12 @@ class Feed (object):
         elif isinstance(exc, _sax.SAXParseException):
             _LOG.error('sax parsing error: {}: {}'.format(exc, self))
             warned = True
+        elif (parsed.bozo and
+              isinstance(exc, _feedparser.CharacterEncodingOverride)):
+            # The feed encoding was incorrectly declared, but the feed parser
+            # was able to automatically determine an encoding.  We don't emit
+            # a warning for this case.
+            pass
         elif parsed.bozo or exc:
             if exc is None:
                 exc = "can't process"
